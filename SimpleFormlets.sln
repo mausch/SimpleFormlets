@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "SimpleFormlets\Web\Web.csproj", "{5AB19C28-9711-4576-8EB2-D0851FBC1111}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Controllers", "SimpleFormlets\Controllers\Controllers.fsproj", "{B19674BB-8F75-48D2-8056-FBDAF6C765C4}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core", "SimpleFormlets\Core\Core.fsproj", "{473A4C14-CFB9-4E8C-B28D-8AA26DCD703B}"
 EndProject
 Global
@@ -17,10 +15,6 @@ Global
 		{5AB19C28-9711-4576-8EB2-D0851FBC1111}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AB19C28-9711-4576-8EB2-D0851FBC1111}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AB19C28-9711-4576-8EB2-D0851FBC1111}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B19674BB-8F75-48D2-8056-FBDAF6C765C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B19674BB-8F75-48D2-8056-FBDAF6C765C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B19674BB-8F75-48D2-8056-FBDAF6C765C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B19674BB-8F75-48D2-8056-FBDAF6C765C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{473A4C14-CFB9-4E8C-B28D-8AA26DCD703B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{473A4C14-CFB9-4E8C-B28D-8AA26DCD703B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{473A4C14-CFB9-4E8C-B28D-8AA26DCD703B}.Release|Any CPU.ActiveCfg = Release|Any CPU

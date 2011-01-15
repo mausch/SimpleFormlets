@@ -90,10 +90,6 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Controllers\Controllers.fsproj">
-      <Project>{1D53FAA1-798D-4560-AA93-49679CC58B3B}</Project>
-      <Name>Controllers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Core.fsproj">
       <Project>{D60E704B-7D74-41FF-98B5-E0EC68FC6D22}</Project>
       <Name>Core</Name>

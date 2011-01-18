@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Views\Home\Register.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

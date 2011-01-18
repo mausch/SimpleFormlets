@@ -29,6 +29,12 @@ module Environ =
             | Some (_,v) -> v
             | _ -> failwithf "Key %s not found in environment" n
 
+    open System.Collections.Specialized
+    let fromNV (a: NameValueCollection) =
+        a.AllKeys
+        |> Seq.collect (fun k -> a.GetValues k |> Seq.map (fun v -> k,v))
+        |> Seq.toList
+
 type xml_item =
     | Text of string
     | Tag of string * (string*string) list * xml_item list
@@ -61,8 +67,9 @@ module XmlWriter =
                 function
                 | Text t -> xtext t
                 | Tag(name, attr, children) -> xelem name (xattrs attr) (renderForest children)
-            List.map render' xml
-        XDocument (renderForest xml)
+            List.map render' x
+        let root = xelem "div" [] (renderForest xml)
+        XDocument root
 
 module EnvironXmlWriter =
     let puree v = v |> Environ.puree |> XmlWriter.puree 
@@ -72,11 +79,15 @@ module EnvironXmlWriter =
         XmlWriter.lift Environ.puree x
 
 type 'a Formlet = 'a Environ XmlWriter NameGen
+[<AutoOpen>]
 module Formlet =
     let puree v : _ Formlet = v |> EnvironXmlWriter.puree |> NameGen.puree
-    let (<*>) f a =
+    let (<*>) f a : _ Formlet =
         NameGen.lift2 EnvironXmlWriter.(<*>) f a
-    let lift f a = puree f <*> a
+    let lift f a : _ Formlet = puree f <*> a
+    let lift2 f a b : _ Formlet = puree f <*> a <*> b
+    let ( *>) f a : _ Formlet = lift2 (fun _ z -> z) f a
+    let ( <*) f a : _ Formlet = lift2 (fun z _ -> z) f a
     let xml (x: xml_item list) : unit Formlet =
         NameGen.puree (EnvironXmlWriter.refine (XmlWriter.xml x))
     let text (s: string) : unit Formlet =
@@ -88,6 +99,7 @@ module Formlet =
         let lookup name = XmlWriter.puree (Environ.lookup name)
         let tag name = xml name (lookup name)
         NameGen.lift tag NameGen.nextName
+    let br: unit Formlet = xml [Tag("br",[],[])]
     let run (f: _ Formlet) =
         NameGen.run f |> snd
 

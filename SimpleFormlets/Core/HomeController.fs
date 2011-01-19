@@ -2,7 +2,6 @@
 
 open System
 open System.Collections.Generic
-open System.Dynamic
 open System.Web
 open System.Web.Mvc
 open SimpleFormlets
@@ -30,9 +29,8 @@ type HomeController() =
     member x.Register() =
         let env = fromNV x.Request.Form
         let name,orderDate,shippingDate,amount = run formlet env
-        let model = ExpandoObject() :> IDictionary<string, obj>
-        model.["Name"] <- name
-        model.["Ordered"] <- orderDate
-        model.["Shipping"] <- shippingDate
-        model.["Amount"] <- amount
-        x.View(model) :> ActionResult
+        x.ViewData.["Name"] <- name
+        x.ViewData.["Ordered"] <- orderDate
+        x.ViewData.["Shipping"] <- shippingDate
+        x.ViewData.["Amount"] <- amount
+        x.View() :> ActionResult

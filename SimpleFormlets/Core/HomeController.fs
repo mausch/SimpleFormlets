@@ -5,7 +5,7 @@ open System.Collections.Generic
 open System.Dynamic
 open System.Web
 open System.Web.Mvc
-open Formlets
+open SimpleFormlets
 
 [<HandleError>]
 type HomeController() =
@@ -28,7 +28,7 @@ type HomeController() =
         x.ViewData.["Message"] <- "Welcome to ASP.NET MVC!"
         x.View(box <| render formlet) :> ActionResult
     member x.Register() =
-        let env = Environ.fromNV x.Request.Form
+        let env = fromNV x.Request.Form
         let name,orderDate,shippingDate,amount = run formlet env
         let model = ExpandoObject() :> IDictionary<string, obj>
         model.["Name"] <- name

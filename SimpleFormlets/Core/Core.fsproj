@@ -46,6 +46,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SimpleFormlets.fs" />
     <Compile Include="Formlets.fs" />
     <Compile Include="HomeController.fs" />
     <Compile Include="Global.fs" />

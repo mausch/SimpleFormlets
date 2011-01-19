@@ -36,5 +36,3 @@ type HomeController() =
         model.["Shipping"] <- shippingDate
         model.["Amount"] <- amount
         x.View(model) :> ActionResult
-    member x.About() =
-        x.View() :> ActionResult

@@ -105,5 +105,4 @@ module Formlet =
 
     open System.Xml.Linq
     let render (f: _ Formlet) = 
-        let xdoc = NameGen.run f |> fst |> XmlWriter.render
-        xdoc.ToString()
+        NameGen.run f |> fst |> XmlWriter.render

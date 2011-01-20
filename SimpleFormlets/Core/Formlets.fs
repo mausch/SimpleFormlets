@@ -2,8 +2,9 @@
 
 type 'a NameGen = int -> 'a * int
 module NameGen =
-    let puree v = fun gen -> v,gen
-    let (<*>) f a = 
+    let puree (v : 'a) : 'a NameGen = 
+        fun gen -> v,gen
+    let (<*>) (f: ('a -> 'b) NameGen) (a: 'a NameGen) : 'b NameGen = 
         fun gen ->
             let v,gen = f gen
             let w,gen = a gen
@@ -13,17 +14,17 @@ module NameGen =
     let nextName : string NameGen =
         fun gen ->
             "input_" + gen.ToString(), gen+1
-    let run c = fst (c 0)
+    let run (c: 'a NameGen) : 'a = fst (c 0)
 
 type 'a Environ = (string*string) list -> 'a
 module Environ =
     let puree v = fun env -> v
-    let (<*>) f a =
+    let (<*>) (f: ('a -> 'b) Environ) (a: 'a Environ) : 'b Environ =
         fun env ->
             let g = f env
             g(a(env))
     let lift f a = puree f <*> a
-    let lookup n : string Environ =
+    let lookup (n: string) : string Environ =
         fun env ->
             match List.tryFind (fun (k,_) -> k = n) env with
             | Some (_,v) -> v
@@ -41,7 +42,7 @@ type xml_item =
 
 type 'a XmlWriter = xml_item list * 'a
 module XmlWriter =
-    let puree v = [],v
+    let puree (v: 'a) : 'a XmlWriter = [],v
     let (<*>) (f: ('a -> 'b) XmlWriter) (a: 'a XmlWriter) : 'b XmlWriter =
         fst f @ fst a, (snd f) (snd a)
     let lift f a = puree f <*> a
@@ -52,7 +53,7 @@ module XmlWriter =
         plug (fun _ -> e) (puree ())
     let text (s: string) : unit XmlWriter =
         xml [Text s]
-    let tag (t: string) (attr: (string*string) list) (v: _ XmlWriter) : _ XmlWriter =
+    let tag (t: string) (attr: (string*string) list) (v: 'a XmlWriter) : 'a XmlWriter =
         plug (fun x -> [Tag(t, attr, x)]) v
 
     open System.Xml.Linq
@@ -72,17 +73,19 @@ module XmlWriter =
         XDocument root
 
 module EnvironXmlWriter =
-    let puree v = v |> Environ.puree |> XmlWriter.puree 
-    let (<*>) f a = XmlWriter.lift2 Environ.(<*>) f a
-    let lift f a : _ Environ XmlWriter = puree f <*> a
-    let refine (x: _ XmlWriter) : _ Environ XmlWriter =
+    let puree (v: 'a) : 'a Environ XmlWriter = 
+        v |> Environ.puree |> XmlWriter.puree 
+    let (<*>) (f: ('a -> 'b) Environ XmlWriter) (a: 'a Environ XmlWriter) : 'b Environ XmlWriter = 
+        XmlWriter.lift2 Environ.(<*>) f a
+    let lift f a = puree f <*> a
+    let refine (x: 'a XmlWriter) : 'a Environ XmlWriter =
         XmlWriter.lift Environ.puree x
 
 type 'a Formlet = 'a Environ XmlWriter NameGen
 [<AutoOpen>]
 module Formlet =
     let puree v : _ Formlet = v |> EnvironXmlWriter.puree |> NameGen.puree
-    let (<*>) f a : _ Formlet =
+    let (<*>) (f: ('a -> 'b) Formlet) (a: 'a Formlet) : 'b Formlet =
         NameGen.lift2 EnvironXmlWriter.(<*>) f a
     let lift f a : _ Formlet = puree f <*> a
     let lift2 f a b : _ Formlet = puree f <*> a <*> b
@@ -92,7 +95,7 @@ module Formlet =
         NameGen.puree (EnvironXmlWriter.refine (XmlWriter.xml x))
     let text (s: string) : unit Formlet =
         xml [Text s]
-    let tag (t: string) (attr: (string*string) list) (f: _ Formlet) : _ Formlet =
+    let tag (t: string) (attr: (string*string) list) (f: 'a Formlet) : 'a Formlet =
         NameGen.lift (XmlWriter.tag t attr) f
     let input : string Formlet =
         let xml name = XmlWriter.tag "input" ["name",name]
@@ -100,7 +103,7 @@ module Formlet =
         let tag name = xml name (lookup name)
         NameGen.lift tag NameGen.nextName
     let br: unit Formlet = xml [Tag("br",[],[])]
-    let run (f: _ Formlet) =
+    let run (f: 'a Formlet) : 'a Environ =
         NameGen.run f |> snd
 
     open System.Xml.Linq

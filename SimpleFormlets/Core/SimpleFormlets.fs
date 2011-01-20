@@ -39,7 +39,7 @@ module Formlet =
             [tag], lookup, i
     let br: unit Formlet = xml [Tag("br",[],[])]
     let run (f: 'a Formlet) : Env -> 'a =
-        let x,e,_ = f 0
+        let _,e,_ = f 0
         e
 
     open System.Xml.Linq

@@ -49,8 +49,7 @@ module XmlWriter =
     let lift2 f a b = puree f <*> a <*> b
     let plug (f: xml_item list -> xml_item list) (a: 'a XmlWriter) : 'a XmlWriter =
         f (fst a), snd a
-    let xml (e: xml_item list): unit XmlWriter =
-        plug (fun _ -> e) (puree ())
+    let xml (e: xml_item list): unit XmlWriter = e,()
     let text (s: string) : unit XmlWriter =
         xml [Text s]
     let tag (t: string) (attr: (string*string) list) (v: 'a XmlWriter) : 'a XmlWriter =
